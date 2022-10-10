@@ -1,10 +1,76 @@
 <!DOCTYPE html>
 <html lang="en">
 <head>
-  <meta charset="UTF-8">
-  <title>$Title$</title>
+    <meta charset="UTF-8">
+    <title>Title</title>
+
+    <style>
+        .pagination-item.active {
+            background-color: darkturquoise;
+        }
+    </style>
 </head>
 <body>
-$END$
+
+<script type="importmap">
+  {
+    "imports": {
+      "vue": "https://unpkg.com/vue@3/dist/vue.esm-browser.js"
+    }
+  }
+
+
+</script>
+
+<div id="app">
+    <div class="pagination">
+        <template v-for="item in paginationLen" :index="item">
+            <span class="pagination-item" :class="{active: item === activeIndex}" @click="changeTable(item)">{{item}}</span>
+        </template>
+    </div>
+
+    <div class="wtable">
+        <table style="border-collapse: collapse">
+            <tr v-for="(item,index) in curTableData" :key="index">
+                <td v-text="item.key"></td>
+                <td v-text="item.value"></td>
+            </tr>
+        </table>
+    </div>
+</div>
+
+<script type="module">
+    import {createApp} from 'vue'
+    import edata from './data.json' assert {type: 'json'};
+
+    createApp({
+        data() {
+            return {
+                edata,
+                activeIndex: 1,
+
+            }
+        },
+        methods: {
+            changeTable(item){
+                this.activeIndex = item
+            }
+        },
+        computed: {
+            paginationLen() {
+                let edataLen = this.edata.length;
+                let len = parseInt(edataLen / 10);
+                if (edataLen % 10 > 0) {
+                    len = len + 1
+                }
+                return len
+            },
+            curTableData() {
+                return this.edata.slice((this.activeIndex - 1) * 10, (this.activeIndex - 1) * 10 + 10)
+            }
+        }
+    }).mount('#app')
+</script>
+
 </body>
 </html>
